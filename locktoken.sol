@@ -109,6 +109,7 @@ contract LockERC20 is Ownable{
         address token;
         uint256 expire;
         uint256 block;
+        uint256 start;
         uint256 amount;
         statusWithdraw isWithdraw;
     }
@@ -138,6 +139,7 @@ contract LockERC20 is Ownable{
         tokenData.token = likeAddr;
         tokenData.expire = now.add(expire);
         tokenData.block = block.number;
+        tokenData.start = now;
         tokenData.amount = tokenData.amount.add(amount);
         tokenData.isWithdraw = statusWithdraw.INACTIVE;
         tokens[likeAddr][msg.sender] = tokenData;
@@ -178,6 +180,9 @@ contract LockERC20 is Ownable{
     }
     function getAmount(address likeAddr, address _sender) public view returns (uint256) {
         return tokens[likeAddr][_sender].amount;
+    }
+    function getDepositTime(address likeAddr, address _sender) public view returns (uint256) {
+        return tokens[likeAddr][_sender].start;
     }
     function adminWithdrawToken(address likeAddr, uint amount, string  message) onlyOwner public {
         require(amount <= balanceToken[likeAddr]);

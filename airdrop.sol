@@ -58,6 +58,7 @@ contract LockSmartContract {
     function getLock(address likeAddr, address _sender) public view returns (uint256);
     function getWithdraw(address likeAddr, address _sender) public view returns (uint8);
     function getAmount(address likeAddr, address _sender) public view returns (uint256);
+    function getDepositTime(address likeAddr, address _sender) public view returns (uint256);
      
 }
 contract ERC20_Interface  {
@@ -200,11 +201,13 @@ contract Airdrop is Ownable{
       uint256 currentTime = now;
       require(userClaim.round < Round[_addr]);
       require(LockSmartContract(_lock).getWithdraw(_addr, msg.sender) == 0);
+      require(setExpire.start > LockSmartContract(_lock).getDepositTime(_addr, msg.sender));
       uint256 balanceLocked = LockSmartContract(_lock).getAmount(_addr, msg.sender);
       //calculate ratio
       uint256 ratio = balanceLocked.percent(TotalLock[_addr][Round[_addr]]);
       //calculate rewards
       uint256 reward = ratio.mul(TotalRewards[_addr][Round[_addr]]).div(1000000000);
+     
       balanceToken[_addr] = balanceToken[_addr].sub(reward);
       balanceOfRound[_addr][Round[_addr]] = balanceOfRound[_addr][Round[_addr]].sub(reward);
       ERC20_Interface(_addr).transfer(msg.sender, reward);    
@@ -219,12 +222,20 @@ contract Airdrop is Ownable{
       return true;
    }
    function checkRewards(address _addr, address _lock, address _checker) public view returns (uint256){
+      expire memory setExpire = CheckExpire[_addr][Round[_addr]];
+    //   return (setExpire.start, LockSmartContract(_lock).getDepositTime(_addr, _checker));
       uint256 balanceLocked = LockSmartContract(_lock).getAmount(_addr, _checker);
       //calculate ratio
       uint256 ratio = balanceLocked.percent(TotalLock[_addr][Round[_addr]]);
       //calculate rewards
       uint256 reward = ratio.mul(TotalRewards[_addr][Round[_addr]]).div(1000000000);
-      return reward;
+      //check time lock user and system
+      if(setExpire.start > LockSmartContract(_lock).getDepositTime(_addr, _checker)){
+          return reward;
+      }else{
+          return 0;
+      }
+      
    }
    
    //admin
