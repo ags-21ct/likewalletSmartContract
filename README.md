@@ -1,7 +1,7 @@
 # likewalletSmartContract
 this is smart contract manage reward for likewallet
 
-##KickbackResturant.sol
+##KickbackResturant.sol<br/><br/>
 ใช้สำหรับการ kickback ให้ลูกค้าที่ซื้ออารหารผ่านร้านกาแฟและร้านอร่อยทุกวันโดยต้องผ่านเมนูที่กำหนดไว้ใน app<br/><br/>
 run on tomochain<br/><br/>
 address : 0xd57199f9977c23fF7FC41941D46d4f831e953223<br/><br/>
